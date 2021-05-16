@@ -1,3 +1,6 @@
+package Package
+
+import akka.actor.ActorSystem
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control.Button
@@ -5,6 +8,9 @@ import scalafx.scene.paint.Color
 import scalafx.scene.shape.Rectangle
 
 object DrawingMain extends JFXApp {
+  private val actorSystem = ActorSystem(ACTOR_SYSTEM_NAME);
+  val game = actorSystem.actorOf(Game.props())
+
   stage = new JFXApp.PrimaryStage {
     title = "Program"
     scene = new Scene(800, 600) {

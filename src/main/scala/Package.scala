@@ -3,6 +3,7 @@ import scalafx.scene.image.Image
 import java.io.FileInputStream
 
 package object Package {
+  val ACTOR_SYSTEM_NAME = "KittyActorSystem"
   val INITIAL_TIMER = 1000
 
   val ANIMATION_FRAMES: Array[Image] = Array(
