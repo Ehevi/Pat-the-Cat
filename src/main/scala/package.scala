@@ -9,7 +9,7 @@ package object kitties {
   val KITTIES_NUMBER = 5
 
   val WINDOW_HEIGHT = 250
-  val WINDOW_WIDTH = 600
+  val WINDOW_WIDTH = 620
   val KITTY_WIDTH = 100
   val KITTY_HEIGHT = 100
   val SPACE_BETWEEN_KITTIES = 20

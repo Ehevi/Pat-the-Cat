@@ -1,8 +1,11 @@
 package kitties
 
+import scalafx.Includes._
 import akka.actor.{ActorRef, ActorSystem, Props}
 import scalafx.application.JFXApp
 import scalafx.scene.Scene
+import scalafx.scene.control.{Button, Label}
+import scalafx.scene.layout.BorderPane
 
 import scala.concurrent.duration.DurationInt
 
@@ -19,24 +22,33 @@ object DrawingMain extends JFXApp {
   stage = new JFXApp.PrimaryStage {
     title = "Kitties Game"
     scene = new Scene(WINDOW_WIDTH, WINDOW_HEIGHT) {
-      content = List(kittiesPanel)
+      root = new BorderPane() {
+        top = new BorderPane() {
+          prefHeight = 50
+          center = new Label("Score:")
+        }
+        center = kittiesPanel
+        bottom = new BorderPane() {
+          prefHeight = 100
+          center = new Button("Start Again")
+        }
+      }
     }
   }
   startKitties()
-  mainFrameActor ! FullScreen
 
   def prepareKittyActors(): Unit = {
     for (i <- 0 until KITTIES_NUMBER) {
       val backgroundColor = COLORS(i)
       val x_position = i * (SPACE_BETWEEN_KITTIES + KITTY_WIDTH) + INITIAL_KITTIES_X
       kittyActors(i) = actorSystem.actorOf(Props(new KittyActor(i, backgroundColor, x_position, kittiesPanelActor)), name = "Kitty" + i)
-      kittiesPanel.addInitialKitty()
+      kittiesPanel.addInitialKitty(backgroundColor)
     }
   }
 
   def startKitties(): Unit = {
     import actorSystem.dispatcher
-    kittyActors.foreach(kitty => actorSystem.scheduler.scheduleOnce(1.second)(kitty ! NextFrame))
+    kittyActors.foreach(kitty => actorSystem.scheduler.scheduleOnce(1000.millis)(kitty ! NextFrame))
   }
 
   def getStage: JFXApp.PrimaryStage = stage
