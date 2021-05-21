@@ -1,5 +1,6 @@
 package kitties
 
+import javafx.event.EventHandler
 import scalafx.Includes._
 import scalafx.geometry.Pos
 import scalafx.scene.effect.{Blend, BlendMode, ColorAdjust, ColorInput, Light, Lighting}

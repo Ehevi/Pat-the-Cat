@@ -11,7 +11,7 @@ case object NextFrame
 class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition: Int, val kittiesPanelActor: ActorRef)
   extends Actor {
 
-  private var score = 0
+  private var kittyScore = 0
   private var frameIndex = 0
 
   override def receive: Receive = {
@@ -21,13 +21,16 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   }
 
   def handleClick(): Unit = {
-    score = score + 1
+    println("Kitty" + kittyIndex + 1 + ": zostalem nacisniety:((")
+    if(kittyScore + 50 < 1000) kittyScore = kittyScore + 50
+    kittiesPanelActor ! UpdateLabel(50)
   }
 
   def handleFrameChange(): Unit = {
     frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
     import context.dispatcher
-    context.system.scheduler.scheduleOnce((1000 - score).millis)(self ! NextFrame)
+    println(kittyScore + " in kitty" + (kittyIndex + 1))
+    context.system.scheduler.scheduleOnce((1000 - kittyScore).millis)(self ! NextFrame)
     kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
   }
 }
