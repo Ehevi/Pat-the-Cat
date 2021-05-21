@@ -44,7 +44,8 @@ object DrawingMain extends JFXApp {
     for (i <- 0 until KITTIES_NUMBER) {
       val backgroundColor = COLORS(i)
       val x_position = i * (SPACE_BETWEEN_KITTIES + KITTY_WIDTH) + INITIAL_KITTIES_X
-      kittyActors(i) = actorSystem.actorOf(Props(new KittyActor(i, backgroundColor, x_position, kittiesPanelActor)), name = "Kitty" + i)
+      kittyActors(i) = actorSystem.actorOf(Props(new KittyActor(i, backgroundColor, x_position, kittiesPanelActor)),
+        name = KITTY_ACTOR_NAMES(i))
       println(kittyActors(i))
       kittiesPanel.addInitialKitty(backgroundColor)
     }
@@ -57,8 +58,8 @@ object DrawingMain extends JFXApp {
 
   def getStage: JFXApp.PrimaryStage = stage
 
-  def updateScore(): Unit = {
-    this.score = this.score + 1
+  def updateScore(addScore: Int): Unit = {
+    this.score = this.score + addScore
     Platform.runLater {
       label.setText("Score: " + score)
     }

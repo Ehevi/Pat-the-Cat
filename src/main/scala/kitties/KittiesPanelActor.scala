@@ -6,6 +6,7 @@ import scalafx.application.Platform
 import scalafx.scene.input.MouseEvent
 
 case class ChangeFrame(index: Int, frameIndex: Int)
+case class UpdateLabel(addScore: Int)
 
 sealed abstract class KittieXRange
 case class Kittie1() extends KittieXRange
@@ -18,6 +19,7 @@ case class SpaceBetween() extends KittieXRange
 class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
   override def receive: Receive = {
     case ChangeFrame(index, frameIndex) => changeFrame(index, frameIndex)
+    case UpdateLabel(addScore) => updateLabel(addScore)
     case _ =>
   }
 
@@ -46,13 +48,16 @@ class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
     val matchedKitty = matchKittieX(me.x)
     matchedKitty match {
       case 0 =>
-      case 1 => context.system.actorSelection("user/Kitty0") ! Clicked
-      case 2 => context.system.actorSelection("user/Kitty1") ! Clicked
-      case 3 => context.system.actorSelection("user/Kitty2") ! Clicked
-      case 4 => context.system.actorSelection("user/Kitty3") ! Clicked
-      case 5 => context.system.actorSelection("user/Kitty4") ! Clicked
+      case 1 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(0)) ! Clicked
+      case 2 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(1)) ! Clicked
+      case 3 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(2)) ! Clicked
+      case 4 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(3)) ! Clicked
+      case 5 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(4)) ! Clicked
     }
     println("Kliknales kota " + matchedKitty + ", x: " + me.x + " y: " + me.y)
   }
 
+  def updateLabel(addScore: Int): Unit = {
+    DrawingMain.updateScore(addScore)
+  }
 }

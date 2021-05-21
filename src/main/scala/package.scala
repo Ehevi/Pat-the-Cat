@@ -15,6 +15,14 @@ package object kitties {
   val SPACE_BETWEEN_KITTIES = 20
   val INITIAL_KITTIES_X = 20
 
+  val KITTY_ACTOR_NAMES: Array[String] = Array(
+    "Kitty1",
+    "Kitty2",
+    "Kitty3",
+    "Kitty4",
+    "Kitty5",
+  )
+
   val ANIMATION_FRAMES: Array[Image] = Array(
     new Image(new FileInputStream("resources\\bieg1.gif")),
     new Image(new FileInputStream("resources\\bieg2.gif")),
