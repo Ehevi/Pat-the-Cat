@@ -21,12 +21,14 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   }
 
   def handleClick(): Unit = {
-    score = score + 1
+    println("Kotek" + kittyIndex + ": zostalem nacisniety:((")
+    if(score + 50 < 1000) score = score + 50
   }
 
   def handleFrameChange(): Unit = {
     frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
     import context.dispatcher
+    println(score + " in kitty" + kittyIndex)
     context.system.scheduler.scheduleOnce((1000 - score).millis)(self ! NextFrame)
     kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
   }

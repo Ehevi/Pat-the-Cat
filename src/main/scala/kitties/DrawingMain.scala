@@ -6,6 +6,7 @@ import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.control.{Button, Label}
 import scalafx.scene.layout.BorderPane
+import scalafx.application.Platform
 
 import scala.concurrent.duration.DurationInt
 
@@ -17,6 +18,8 @@ object DrawingMain extends JFXApp {
   private val mainFrameActor = actorSystem.actorOf(Props(new MainFrameActor(kittiesPanel)), name = "MainFrameActor")
 
   private val kittyActors = new Array[ActorRef](KITTIES_NUMBER)
+  private var score = 0;
+  private var label = new Label("Score: " + score)
 
   prepareKittyActors()
   stage = new JFXApp.PrimaryStage {
@@ -25,7 +28,7 @@ object DrawingMain extends JFXApp {
       root = new BorderPane() {
         top = new BorderPane() {
           prefHeight = 50
-          center = new Label("Score:")
+          center = label
         }
         center = kittiesPanel
         bottom = new BorderPane() {
@@ -42,6 +45,7 @@ object DrawingMain extends JFXApp {
       val backgroundColor = COLORS(i)
       val x_position = i * (SPACE_BETWEEN_KITTIES + KITTY_WIDTH) + INITIAL_KITTIES_X
       kittyActors(i) = actorSystem.actorOf(Props(new KittyActor(i, backgroundColor, x_position, kittiesPanelActor)), name = "Kitty" + i)
+      println(kittyActors(i))
       kittiesPanel.addInitialKitty(backgroundColor)
     }
   }
@@ -52,4 +56,11 @@ object DrawingMain extends JFXApp {
   }
 
   def getStage: JFXApp.PrimaryStage = stage
+
+  def updateScore(): Unit = {
+    this.score = this.score + 1
+    Platform.runLater {
+      label.setText("Score: " + score)
+    }
+  }
 }
