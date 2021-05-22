@@ -8,6 +8,7 @@ import scala.concurrent.duration._
 case object Clicked
 case object NextFrame
 case object Start
+case object ReStart
 
 class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition: Int, val kittiesPanelActor: ActorRef)
   extends Actor {
@@ -20,6 +21,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     case Clicked => handleClick()
     case NextFrame => handleFrameChange()
     case Start => handleStart()
+    case ReStart => handleRestart()
     case _ =>
   }
 
@@ -41,8 +43,11 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   }
 
   def handleStart(): Unit = {
+    hasStarted = true
+  }
+
+  def handleRestart(): Unit = {
     frameIndex = 0
     kittyScore = 0
-    hasStarted = true
   }
 }

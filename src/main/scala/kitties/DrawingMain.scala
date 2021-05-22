@@ -24,12 +24,15 @@ object DrawingMain extends JFXApp {
 
   val startButton = new Button("Start!")
   startButton.onAction = { _ =>
-    val negativeScore = 0 - this.score
-    updateScore(negativeScore)
-    kittyActors.foreach(kitty => (kitty ! Start))
     if (!hasStarted) {
       hasStarted = true
       startKitties()
+      kittyActors.foreach(kitty => (kitty ! Start))
+      startButton.text = "Restart!"
+    } else {
+      val negativeScore = 0 - this.score
+      updateScore(negativeScore)
+      kittyActors.foreach(kitty => (kitty ! ReStart))
     }
   }
 
@@ -45,7 +48,9 @@ object DrawingMain extends JFXApp {
         center = kittiesPanel
         bottom = new BorderPane() {
           prefHeight = 100
-          center = startButton
+          center = new BorderPane() {
+            center = startButton
+          }
         }
       }
     }
