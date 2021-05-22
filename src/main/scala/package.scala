@@ -35,6 +35,18 @@ package object kitties {
     new Image(new FileInputStream("resources\\ziewanie.gif"))
   )
 
+  val FRAME_POINTS: Array[Int] = Array(
+    1, // bieg1
+    1, // bieg2
+    -1, // drapanie1
+    -1, //drapanie2
+    10, // pobudka
+    -2, // spanie1
+    -2, // spanie2
+    10, // zatrzymanie
+    10, // ziewanie
+  )
+
   val COLORS: Array[Color] = Array(
     Color.Pink, Color.AliceBlue, Color.Beige, Color.Tomato, Color.Crimson
   )

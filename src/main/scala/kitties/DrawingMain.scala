@@ -20,13 +20,17 @@ object DrawingMain extends JFXApp {
   private val kittyActors = new Array[ActorRef](KITTIES_NUMBER)
   private var score = 0
   private var label = new Label("Score: " + score)
+  private var hasStarted = false
 
   val startButton = new Button("Start!")
   startButton.onAction = { _ =>
     val negativeScore = 0 - this.score
     updateScore(negativeScore)
     kittyActors.foreach(kitty => (kitty ! Start))
-    startKitties()
+    if (!hasStarted) {
+      hasStarted = true
+      startKitties()
+    }
   }
 
   prepareKittyActors()
