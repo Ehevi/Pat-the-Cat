@@ -7,6 +7,7 @@ import scala.concurrent.duration._
 
 case object Clicked
 case object NextFrame
+case object Start
 
 class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition: Int, val kittiesPanelActor: ActorRef)
   extends Actor {
@@ -17,6 +18,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   override def receive: Receive = {
     case Clicked => handleClick()
     case NextFrame => handleFrameChange()
+    case Start => handleStart()
     case _ =>
   }
 
@@ -32,5 +34,10 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     println(kittyScore + " in kitty" + (kittyIndex + 1))
     context.system.scheduler.scheduleOnce((1000 - kittyScore).millis)(self ! NextFrame)
     kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
+  }
+
+  def handleStart(): Unit = {
+    frameIndex = 0
+    kittyScore = 0
   }
 }
