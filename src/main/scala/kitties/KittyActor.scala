@@ -1,6 +1,6 @@
 package kitties
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{Actor, ActorRef, Cancellable}
 import scalafx.scene.paint.Color
 
 import scala.concurrent.duration._
@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 case object Clicked
 case object NextFrame
 case object Start
-case object ReStart
+case object Stop
 
 class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition: Int, val kittiesPanelActor: ActorRef)
   extends Actor {
@@ -16,6 +16,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   private var kittyScore = 0
   private var frameIndex = 0
+  private var cancellable : Cancellable = _
 
   override def receive: Receive = {
     active(false)
@@ -23,7 +24,9 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   def active(hasStarted: Boolean): Receive = {
     case Start => become(active(true))
-    case ReStart => handleRestart()
+    case Stop =>
+      handleStop()
+      become(active(false))
     case Clicked => if (hasStarted) handleClick()
     case NextFrame => handleFrameChange()
     case _ =>
@@ -40,11 +43,12 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
     import context.dispatcher
     println(kittyScore + " in kitty" + (kittyIndex + 1))
-    context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
+    cancellable = context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
     kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
   }
 
-  def handleRestart(): Unit = {
+  def handleStop(): Unit = {
+    cancellable.cancel()
     frameIndex = 0
     kittyScore = 0
   }

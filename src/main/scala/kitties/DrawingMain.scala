@@ -25,14 +25,16 @@ object DrawingMain extends JFXApp {
   val startButton = new Button("Start!")
   startButton.onAction = { _ =>
     if (hasStarted) {
+      kittyActors.foreach(kitty => kitty ! Stop)
+      hasStarted = false
+      startButton.text = "Start!"
+    } else {
       val negativeScore = 0 - this.score
       updateScore(negativeScore)
-      kittyActors.foreach(kitty => kitty ! ReStart)
-    } else {
       hasStarted = true
       startKitties()
       kittyActors.foreach(kitty => kitty ! Start)
-      startButton.text = "Restart!"
+      startButton.text = "Stop!"
     }
   }
 
