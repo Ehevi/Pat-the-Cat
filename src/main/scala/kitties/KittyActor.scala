@@ -12,26 +12,28 @@ case object ReStart
 
 class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition: Int, val kittiesPanelActor: ActorRef)
   extends Actor {
+  import context._
 
   private var kittyScore = 0
   private var frameIndex = 0
-  private var hasStarted = false
 
   override def receive: Receive = {
-    case Clicked => handleClick()
-    case NextFrame => handleFrameChange()
-    case Start => handleStart()
+    active(false)
+  }
+
+  def active(hasStarted: Boolean): Receive = {
+    case Start => become(active(true))
     case ReStart => handleRestart()
+    case Clicked => if (hasStarted) handleClick()
+    case NextFrame => handleFrameChange()
     case _ =>
   }
 
   def handleClick(): Unit = {
     val score = FRAME_POINTS(frameIndex)
     println("Kitty" + kittyIndex + 1 + ": zostalem nacisniety:((")
-    if(hasStarted) {
-      if((kittyScore + score < 1000) && (kittyScore + score > 0)) kittyScore = kittyScore + score
-      kittiesPanelActor ! UpdateLabel(score)
-    }
+    if((kittyScore + score < 1000) && (kittyScore + score > 0)) kittyScore = kittyScore + score
+    kittiesPanelActor ! UpdateLabel(score)
   }
 
   def handleFrameChange(): Unit = {
@@ -40,10 +42,6 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     println(kittyScore + " in kitty" + (kittyIndex + 1))
     context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
     kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
-  }
-
-  def handleStart(): Unit = {
-    hasStarted = true
   }
 
   def handleRestart(): Unit = {
