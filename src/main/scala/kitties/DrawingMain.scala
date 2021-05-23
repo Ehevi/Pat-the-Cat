@@ -18,8 +18,23 @@ object DrawingMain extends JFXApp {
   private val mainFrameActor = actorSystem.actorOf(Props(new MainFrameActor(kittiesPanel)), name = "MainFrameActor")
 
   private val kittyActors = new Array[ActorRef](KITTIES_NUMBER)
-  private var score = 0;
-  private var label = new Label("Score: " + score)
+  private var score = 0
+  private val label = new Label("Score: " + score)
+  private var hasStarted = false
+
+  val startButton = new Button("Start!")
+  startButton.onAction = { _ =>
+    if (hasStarted) {
+      val negativeScore = 0 - this.score
+      updateScore(negativeScore)
+      kittyActors.foreach(kitty => kitty ! ReStart)
+    } else {
+      hasStarted = true
+      startKitties()
+      kittyActors.foreach(kitty => kitty ! Start)
+      startButton.text = "Restart!"
+    }
+  }
 
   prepareKittyActors()
   stage = new JFXApp.PrimaryStage {
@@ -33,12 +48,13 @@ object DrawingMain extends JFXApp {
         center = kittiesPanel
         bottom = new BorderPane() {
           prefHeight = 100
-          center = new Button("Start Again")
+          center = new BorderPane() {
+            center = startButton
+          }
         }
       }
     }
   }
-  startKitties()
 
   def prepareKittyActors(): Unit = {
     for (i <- 0 until KITTIES_NUMBER) {
