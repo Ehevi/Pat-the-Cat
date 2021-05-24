@@ -35,6 +35,12 @@ package object kitties {
     new Image(new FileInputStream("resources\\ziewanie.gif"))
   )
 
+  val STATE_INDEXES: Array[Int] = Array(
+    1, // bieg2
+    3, // drapanie2
+    6, // spanie2
+  )
+
   val FRAME_POINTS: Array[Int] = Array(
     1, // bieg1
     1, // bieg2

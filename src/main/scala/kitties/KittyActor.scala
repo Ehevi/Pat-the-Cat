@@ -4,6 +4,7 @@ import akka.actor.{Actor, ActorRef, Cancellable}
 import scalafx.scene.paint.Color
 
 import scala.concurrent.duration._
+import scala.util.Random
 
 case object Clicked
 case object NextFrame
@@ -16,6 +17,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   private var kittyScore = 0
   private var frameIndex = 0
+  private var loops = 1
   private var cancellable : Cancellable = _
 
   override def receive: Receive = {
@@ -28,7 +30,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
       handleStop()
       become(active(false))
     case Clicked => if (hasStarted) handleClick()
-    case NextFrame => handleFrameChange()
+    case NextFrame => handleFrameChange(hasStarted)
     case _ =>
   }
 
@@ -39,16 +41,40 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     kittiesPanelActor ! UpdateLabel(score)
   }
 
-  def handleFrameChange(): Unit = {
-    frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
-    import context.dispatcher
-    println(kittyScore + " in kitty" + (kittyIndex + 1))
-    cancellable = context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
-    kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
+  def handleFrameChange(hasStarted: Boolean): Unit = {
+    if (!hasStarted) {
+      while (!cancellable.isCancelled) {
+        cancellable.cancel()
+      }
+    } else {
+      if(loops < 3 && STATE_INDEXES.contains(frameIndex)) {
+        val random = new Random()
+        val value = random.nextInt() % 2
+        if(value == 1) {
+          loops = 1
+          frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+        }
+        else {
+          loops += 1
+          frameIndex = (frameIndex - 1)
+        }
+      }
+      else {
+        if(!STATE_INDEXES.contains(frameIndex + 1)) loops = 1
+        frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+      }
+      import context.dispatcher
+      println(kittyScore + " in kitty" + (kittyIndex + 1))
+      cancellable = context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
+      kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
+    }
   }
 
   def handleStop(): Unit = {
-    cancellable.cancel()
+    println("Dostalem stop. Kotek: " + (kittyIndex + 1))
+    while (!cancellable.isCancelled) {
+      cancellable.cancel()
+    }
     frameIndex = 0
     kittyScore = 0
   }
