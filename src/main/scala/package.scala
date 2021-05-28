@@ -26,19 +26,19 @@ package object kitties {
   val ANIMATION_FRAMES: Array[Image] = Array(
     new Image(new FileInputStream("resources\\bieg1.gif")),
     new Image(new FileInputStream("resources\\bieg2.gif")),
+    new Image(new FileInputStream("resources\\zatrzymanie.gif")),
     new Image(new FileInputStream("resources\\drapanie1.gif")),
     new Image(new FileInputStream("resources\\drapanie2.gif")),
-    new Image(new FileInputStream("resources\\pobudka.gif")),
+    new Image(new FileInputStream("resources\\ziewanie.gif")),
     new Image(new FileInputStream("resources\\spanie1.gif")),
     new Image(new FileInputStream("resources\\spanie2.gif")),
-    new Image(new FileInputStream("resources\\zatrzymanie.gif")),
-    new Image(new FileInputStream("resources\\ziewanie.gif"))
+    new Image(new FileInputStream("resources\\pobudka.gif"))
   )
 
   val STATE_INDEXES: Array[Int] = Array(
     1, // bieg2
-    3, // drapanie2
-    6, // spanie2
+    4, // drapanie2
+    7, // spanie2
   )
 
   val FRAME_POINTS: Array[Int] = Array(
