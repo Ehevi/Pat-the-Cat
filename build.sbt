@@ -25,3 +25,9 @@ libraryDependencies +=
 
 libraryDependencies +=
   "org.scalafx" %% "scalafx" % "15.0.1-R21"
+
+libraryDependencies +=
+  "com.typesafe.akka" %% "akka-testkit" % "2.6.14" % Test
+
+libraryDependencies +=
+  "org.scalatest" %% "scalatest" % "3.1.4" % Test
