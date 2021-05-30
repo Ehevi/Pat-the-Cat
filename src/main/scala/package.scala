@@ -45,13 +45,13 @@ package object kitties {
   val FRAME_POINTS: Array[Int] = Array(
     1, // bieg1
     1, // bieg2
+    10, // zatrzymanie
     -1, // drapanie1
-    -1, //drapanie2
-    10, // pobudka
+    -1, // drapanie2
+    10, // ziewanie
     -2, // spanie1
     -2, // spanie2
-    10, // zatrzymanie
-    10, // ziewanie
+    10, // pobudka
   )
 
   val COLORS: Array[Color] = Array(
