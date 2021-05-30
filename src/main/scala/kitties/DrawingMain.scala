@@ -11,13 +11,13 @@ import scalafx.application.Platform
 import scalafx.scene.text.Font
 
 import scala.concurrent.duration.DurationInt
+import scala.sys.exit
 
 object DrawingMain extends JFXApp {
   private val kittiesPanel = new KittiesPanel
 
   private val actorSystem = ActorSystem("ActorSystem")
   private val kittiesPanelActor = actorSystem.actorOf(Props(new KittiesPanelActor(kittiesPanel)), name = "KittiesPanelActor")
-  private val mainFrameActor = actorSystem.actorOf(Props(new MainFrameActor(kittiesPanel)), name = "MainFrameActor")
 
   private val kittyActors = new Array[ActorRef](KITTIES_NUMBER)
   private var score = 0
@@ -86,6 +86,11 @@ object DrawingMain extends JFXApp {
         }
       }
     }
+  }
+
+  override def stopApp(): Unit = {
+    actorSystem.terminate()
+    exit(0)
   }
 
   def prepareKittyActors(): Unit = {
