@@ -43,7 +43,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   def handleFrameChange(hasStarted: Boolean): Unit = {
     if (!hasStarted) {
-      while (!cancellable.isCancelled) {
+      while (cancellable != null && !cancellable.isCancelled) {
         cancellable.cancel()
       }
     } else {
@@ -72,7 +72,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   def handleStop(): Unit = {
     println("Dostalem stop. Kotek: " + (kittyIndex + 1))
-    while (!cancellable.isCancelled) {
+    while (cancellable != null && !cancellable.isCancelled) {
       cancellable.cancel()
     }
     frameIndex = 0
