@@ -22,7 +22,7 @@ object DrawingMain extends JFXApp {
   private val kittyActors = new Array[ActorRef](KITTIES_NUMBER)
   private var score = 0
   private var time: Double = 60
-  var time_text: String = "%.3f".format(time)
+  var timeText: String = "%.3f".format(time)
   private var lastTimer: Double = 0
   private val label = new Label("Score: " + score)
   private val timerLabel = new Label("Time: " + ((time*1000).round / 1000.toDouble)) {
@@ -33,12 +33,12 @@ object DrawingMain extends JFXApp {
   val timer: AnimationTimer = AnimationTimer ( t => {
     val delta = (t.toDouble - lastTimer) / 1e9
     if (delta < 1) time -= delta
-    time_text = "%.3f".format(time)
-    if (time > 0) timerLabel.text = "Time: " + time_text
+    timeText = "%.3f".format(time)
+    if (time > 0) timerLabel.text = "Time: " + timeText
     else {
       time = 0
-      time_text = "%.3f".format(time)
-      timerLabel.text = "Time: " + time_text
+      timeText = "%.3f".format(time)
+      timerLabel.text = "Time: " + timeText
       stopGame()
     }
     lastTimer = t
@@ -51,8 +51,8 @@ object DrawingMain extends JFXApp {
     } else {
       time = 60
       lastTimer = 0
-      time_text = "%.3f".format(time)
-      timerLabel.text = "Time: " + time_text
+      timeText = "%.3f".format(time)
+      timerLabel.text = "Time: " + timeText
       timer.start()
       val negativeScore = 0 - this.score
       updateScore(negativeScore)
@@ -60,7 +60,6 @@ object DrawingMain extends JFXApp {
       for (i <- 0 until KITTIES_NUMBER) {
         kittiesPanelActor ! ChangeFrame(i, 0)
       }
-      kittiesPanelActor !
       startKitties()
       kittyActors.foreach(kitty => kitty ! Start)
       startButton.text = "Stop!"
