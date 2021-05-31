@@ -16,6 +16,7 @@ class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
   }
 
   def changeFrame(index: Int, frameIndex: Int): Unit = {
+    println("KittiesPanelActor changing Kitty no. " + (index + 1) + " frame to " + frameIndex )
     Platform.runLater {
       kittiesPanel.changeKittyFrame(index, frameIndex)
     }
@@ -46,10 +47,12 @@ class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
       case 4 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(3)) ! Clicked
       case 5 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(4)) ! Clicked
     }
-    println("Kliknales kota " + matchedKitty + ", x: " + me.x + " y: " + me.y)
+    if(matchedKitty != 0)
+      println("Clicked Kitty no. " + matchedKitty + ", x: " + me.x + " y: " + me.y)
   }
 
   def updateLabel(addScore: Int): Unit = {
+    println("KittiesPanelActor adding score " + addScore)
     DrawingMain.updateScore(addScore)
   }
 }
