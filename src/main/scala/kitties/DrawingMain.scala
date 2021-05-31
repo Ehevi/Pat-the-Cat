@@ -59,7 +59,7 @@ object DrawingMain extends JFXApp {
   prepareKittyActors()
 
   stage = new JFXApp.PrimaryStage {
-    title = "Kitties Game"
+    title = "Pat the Cat"
     scene = new Scene(WINDOW_WIDTH, WINDOW_HEIGHT) {
       root = new BorderPane() {
         top = new BorderPane() {
