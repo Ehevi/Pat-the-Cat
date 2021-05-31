@@ -15,7 +15,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   extends Actor {
   import context._
 
-  private var kittyScore = 0
+  private var kittySpeedRate = 0
   private var frameIndex = 0
   private var loops = 1
   private var cancellable : Cancellable = _
@@ -36,33 +36,32 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   def handleClick(): Unit = {
     val score = FRAME_POINTS(frameIndex)
-    println("Kitty" + kittyIndex + 1 + ": zostalem nacisniety:((")
-    if((kittyScore + score < 1000) && (kittyScore + score > 0)) kittyScore = kittyScore + score
+    println("Kitty no. " + (kittyIndex + 1) + " received Click message")
+    if((kittySpeedRate + score < 1000) && (kittySpeedRate + score > 0)) kittySpeedRate = kittySpeedRate + score
     kittiesPanelActor ! UpdateLabel(score)
   }
 
   def handleFrameChange(hasStarted: Boolean): Unit = {
     if (!hasStarted) {
-      println("Nie powinienem tu byc...")
       while (cancellable != null && !cancellable.isCancelled) {
         cancellable.cancel()
       }
     } else {
       updateFrameIndex()
       import context.dispatcher
-      println(kittyScore + " in kitty" + (kittyIndex + 1))
-      cancellable = context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
+      println("Kitty no. " + (kittyIndex + 1) + " speed rate: " + kittySpeedRate)
+      cancellable = context.system.scheduler.scheduleOnce((1000 - kittySpeedRate*5).millis)(self ! NextFrame)
       kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
     }
   }
 
   def handleStop(): Unit = {
-    println("Dostalem stop. Kotek: " + (kittyIndex + 1))
+    println("Kitty no. " + (kittyIndex + 1) + " received Stop message")
     while (cancellable != null && !cancellable.isCancelled) {
       cancellable.cancel()
     }
     frameIndex = 0
-    kittyScore = 0
+    kittySpeedRate = 0
   }
 
   def updateFrameIndex(): Unit = {
@@ -75,7 +74,7 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
       }
       else {
         loops += 1
-        frameIndex = (frameIndex - 1)
+        frameIndex = frameIndex - 1
       }
     }
     else {
