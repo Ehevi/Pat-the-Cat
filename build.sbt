@@ -1,8 +1,10 @@
-name := "untitled"
+name := "Pat the Cat"
 
-version := "0.1"
+version := "1.0"
 
 scalaVersion := "2.13.5"
+
+fork := true
 
 lazy val javaFXModules = {
   // Determine OS version of JavaFX binaries
