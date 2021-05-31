@@ -1,20 +1,12 @@
 package kitties
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.Actor
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.scene.input.MouseEvent
 
 case class ChangeFrame(index: Int, frameIndex: Int)
 case class UpdateLabel(addScore: Int)
-
-sealed abstract class KittieXRange
-case class Kittie1() extends KittieXRange
-case class Kittie2() extends KittieXRange
-case class Kittie3() extends KittieXRange
-case class Kittie4() extends KittieXRange
-case class Kittie5() extends KittieXRange
-case class SpaceBetween() extends KittieXRange
 
 class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
   override def receive: Receive = {
