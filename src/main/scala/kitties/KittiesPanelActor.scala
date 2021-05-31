@@ -29,7 +29,7 @@ class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
     }
   }
 
-  def matchKittieX(x: Double): Int = {
+  def matchKittyX(x: Double): Int = {
     x match {
       case x if INITIAL_KITTIES_X < x && x < (KITTY_WIDTH + INITIAL_KITTIES_X) => 1
       case x if (SPACE_BETWEEN_KITTIES + INITIAL_KITTIES_X + KITTY_WIDTH) < x &&
@@ -45,7 +45,7 @@ class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
   }
 
   kittiesPanel.onMouseClicked = (me: MouseEvent) => {
-    val matchedKitty = matchKittieX(me.x)
+    val matchedKitty = matchKittyX(me.x)
     matchedKitty match {
       case 0 =>
       case 1 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(0)) ! Clicked

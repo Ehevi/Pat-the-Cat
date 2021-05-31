@@ -1,10 +1,9 @@
 package kitties
 
-import javafx.event.EventHandler
 import scalafx.Includes._
 import scalafx.geometry.Pos
-import scalafx.scene.effect.{Blend, BlendMode, ColorAdjust, ColorInput, Light, Lighting}
-import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.effect.{Light, Lighting}
+import scalafx.scene.image.ImageView
 import scalafx.scene.layout.HBox
 import scalafx.scene.paint.Color
 
@@ -16,23 +15,7 @@ class KittiesPanel extends HBox {
   alignment = Pos.Center
 
   def addInitialKitty(backgroundColor: Color): Unit = {
-
-    val lighting = new Lighting() {
-      diffuseConstant = 1.0
-      specularConstant = 0.0
-      specularExponent = 0.0
-      surfaceScale = 0.0
-      light = new Light.Distant(45, 45, backgroundColor)
-    }
-
-    this.children += new ImageView {
-      fitWidth = KITTY_WIDTH
-      fitHeight = KITTY_HEIGHT
-      image = ANIMATION_FRAMES(0)
-      cache = true
-      smooth = true
-      effect = lighting
-    }
+    this.children += new KittyImageView(backgroundColor)
   }
 
   def changeKittyFrame(kittyIndex: Int, frameIndex: Int): Unit = {
@@ -42,5 +25,20 @@ class KittiesPanel extends HBox {
     } catch {
       case e: Throwable => println(e.getMessage)
     }
+  }
+}
+
+class KittyImageView(val backgroundColor: Color) extends ImageView {
+  fitWidth = KITTY_WIDTH
+  fitHeight = KITTY_HEIGHT
+  image = ANIMATION_FRAMES(0)
+  cache = true
+  smooth = true
+  effect = new Lighting {
+    diffuseConstant = 1.0
+    specularConstant = 0.0
+    specularExponent = 0.0
+    surfaceScale = 0.0
+    light = new Light.Distant(45, 45, backgroundColor)
   }
 }

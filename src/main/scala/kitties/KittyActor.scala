@@ -27,8 +27,8 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   def active(hasStarted: Boolean): Receive = {
     case Start => become(active(true))
     case Stop =>
-      handleStop()
       become(active(false))
+      handleStop()
     case Clicked => if (hasStarted) handleClick()
     case NextFrame => handleFrameChange(hasStarted)
     case _ =>
@@ -43,26 +43,12 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
 
   def handleFrameChange(hasStarted: Boolean): Unit = {
     if (!hasStarted) {
+      println("Nie powinienem tu byc...")
       while (cancellable != null && !cancellable.isCancelled) {
         cancellable.cancel()
       }
     } else {
-      if(loops < 3 && STATE_INDEXES.contains(frameIndex)) {
-        val random = new Random()
-        val value = random.nextInt() % 2
-        if(value == 1) {
-          loops = 1
-          frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
-        }
-        else {
-          loops += 1
-          frameIndex = (frameIndex - 1)
-        }
-      }
-      else {
-        if(!STATE_INDEXES.contains(frameIndex + 1)) loops = 1
-        frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
-      }
+      updateFrameIndex()
       import context.dispatcher
       println(kittyScore + " in kitty" + (kittyIndex + 1))
       cancellable = context.system.scheduler.scheduleOnce((1000 - kittyScore*5).millis)(self ! NextFrame)
@@ -77,5 +63,24 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     }
     frameIndex = 0
     kittyScore = 0
+  }
+
+  def updateFrameIndex(): Unit = {
+    if(loops < 3 && STATE_INDEXES.contains(frameIndex)) {
+      val random = new Random()
+      val value = random.nextInt() % 2
+      if(value == 1) {
+        loops = 1
+        frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+      }
+      else {
+        loops += 1
+        frameIndex = (frameIndex - 1)
+      }
+    }
+    else {
+      if(!STATE_INDEXES.contains(frameIndex + 1)) loops = 1
+      frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+    }
   }
 }
