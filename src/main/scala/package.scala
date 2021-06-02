@@ -60,4 +60,31 @@ package object kitties {
 
   val ANIMATION_LENGTH: Int = ANIMATION_FRAMES.length
 
+  object KITTY_X_MATCHER {
+    def firstKittyMatched(x: Double): Boolean = {
+      INITIAL_KITTIES_X < x && x < (KITTY_WIDTH + INITIAL_KITTIES_X)
+    }
+
+    def secondKittyMatched(x: Double): Boolean = {
+      (SPACE_BETWEEN_KITTIES + INITIAL_KITTIES_X + KITTY_WIDTH) < x &&
+        x < (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES + KITTY_WIDTH * 2)
+    }
+
+    def thirdKittyMatched(x: Double): Boolean = {
+      (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES * 2 + KITTY_WIDTH * 2) < x &&
+        x < (SPACE_BETWEEN_KITTIES * 2 + INITIAL_KITTIES_X + KITTY_WIDTH * 3)
+    }
+
+    def fourthKittyMatched(x: Double): Boolean = {
+      (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES * 3 + KITTY_WIDTH * 3) < x &&
+        x < (SPACE_BETWEEN_KITTIES * 3 + INITIAL_KITTIES_X + KITTY_WIDTH * 4)
+    }
+
+    def fifthKittyMatched(x: Double): Boolean = {
+      (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES * 4 + KITTY_WIDTH * 4) < x &&
+        x < (WINDOW_WIDTH - SPACE_BETWEEN_KITTIES)
+    }
+  }
+
+
 }

@@ -23,7 +23,7 @@ class KittyActorTests extends TestKit(ActorSystem("test-system"))
     val kittiesPanel = new KittiesPanel
     val kittiesPanelActor = system.actorOf(Props(new KittiesPanelActor(kittiesPanel)))
     val kittyActor = system.actorOf(Props(new KittyActor(0, Color.Blue, 0, kittiesPanelActor) {
-      override def handleClick(): Unit = {
+      override def handleClick(frameIndex: Int): Unit = {
         probe.ref ! "msg"
       }
     }))
@@ -37,7 +37,7 @@ class KittyActorTests extends TestKit(ActorSystem("test-system"))
     val kittiesPanel = new KittiesPanel
     val kittiesPanelActor = system.actorOf(Props(new KittiesPanelActor(kittiesPanel)))
     val kittyActor = system.actorOf(Props(new KittyActor(0, Color.Blue, 0, kittiesPanelActor) {
-      override def handleClick(): Unit = {
+      override def handleClick(frameIndex: Int): Unit = {
         probe.ref ! "msg"
       }
     }))
@@ -54,7 +54,7 @@ class KittyActorTests extends TestKit(ActorSystem("test-system"))
     val kittiesPanel = new KittiesPanel
     val kittiesPanelActor = system.actorOf(Props(new KittiesPanelActor(kittiesPanel)))
     val kittyActor = system.actorOf(Props(new KittyActor(0, Color.Blue, 0, kittiesPanelActor) {
-      override def handleFrameChange(hasStarted: Boolean): Unit = {
+      override def handleFrameChange(hasStarted: Boolean, loops: Int, frameIndex: Int): Unit = {
         import system.dispatcher
         system.scheduler.scheduleOnce(1000.millis)(probe.ref ! NextFrame)
       }
@@ -117,7 +117,7 @@ class KittyActorTests extends TestKit(ActorSystem("test-system"))
   it should "not change frame when stopped" in {
     val probe = TestProbe()
     val kittyActor = system.actorOf(Props(new KittyActor(0, Color.Blue, 0, probe.ref) {
-      override def handleFrameChange(hasStarted: Boolean): Unit = {
+      override def handleFrameChange(hasStarted: Boolean, loops: Int, frameIndex: Int): Unit = {
         import system.dispatcher
         system.scheduler.scheduleOnce(1000.millis)(probe.ref ! NextFrame)
       }

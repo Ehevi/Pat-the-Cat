@@ -16,42 +16,43 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
   import context._
 
   private var kittySpeedRate = 0
-  private var frameIndex = 0
-  private var loops = 1
+  //private var frameIndex = 0
+  //private var loops = 1
   private var cancellable : Cancellable = _
 
   override def receive: Receive = {
-    active(false)
+    active(hasStarted = false, 0, 0)
   }
 
-  def active(hasStarted: Boolean): Receive = {
-    case Start => become(active(true))
+  def active(hasStarted: Boolean, loops: Int, frameIndex: Int): Receive = {
+    case Start =>
+      become(active(hasStarted = true, 1, 0))
     case Stop =>
-      become(active(false))
+      become(active(hasStarted = false, 0, 0))
       handleStop()
-    case Clicked => if (hasStarted) handleClick()
-    case NextFrame => handleFrameChange(hasStarted)
+    case Clicked => if (hasStarted) handleClick(frameIndex)
+    case NextFrame => handleFrameChange(hasStarted, loops, frameIndex)
     case _ =>
   }
 
-  def handleClick(): Unit = {
+  def handleClick(frameIndex: Int): Unit = {
     val score = FRAME_POINTS(frameIndex)
     println("Kitty no. " + (kittyIndex + 1) + " received Click message")
     if((kittySpeedRate + score < 1000) && (kittySpeedRate + score > 0)) kittySpeedRate = kittySpeedRate + score
     kittiesPanelActor ! UpdateLabel(score)
   }
 
-  def handleFrameChange(hasStarted: Boolean): Unit = {
+  def handleFrameChange(hasStarted: Boolean, loops: Int, frameIndex: Int): Unit = {
     if (!hasStarted) {
       while (cancellable != null && !cancellable.isCancelled) {
         cancellable.cancel()
       }
     } else {
-      updateFrameIndex()
+      val newIndex = updateFrameIndex(loops, frameIndex)
       import context.dispatcher
       println("Kitty no. " + (kittyIndex + 1) + " speed rate: " + kittySpeedRate)
       cancellable = context.system.scheduler.scheduleOnce((1000 - kittySpeedRate*5).millis)(self ! NextFrame)
-      kittiesPanelActor ! ChangeFrame(kittyIndex, frameIndex)
+      kittiesPanelActor ! ChangeFrame(kittyIndex, newIndex)
     }
   }
 
@@ -60,26 +61,30 @@ class KittyActor(val kittyIndex: Int, val backgroundColor: Color, val xPosition:
     while (cancellable != null && !cancellable.isCancelled) {
       cancellable.cancel()
     }
-    frameIndex = 0
+    become(active(hasStarted = false, 0, 0))
+    //frameIndex = 0
     kittySpeedRate = 0
   }
 
-  def updateFrameIndex(): Unit = {
+  def updateFrameIndex(loops: Int, frameIndex: Int): Int = {
     if(loops < 3 && STATE_INDEXES.contains(frameIndex)) {
       val random = new Random()
-      val value = random.nextInt() % 2
+      val value = random.nextInt() % 3
       if(value == 1) {
-        loops = 1
-        frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+        // frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+        become(active(hasStarted = true, 1, (frameIndex+1) % ANIMATION_LENGTH))
+        (frameIndex + 1) % ANIMATION_LENGTH
       }
       else {
-        loops += 1
-        frameIndex = frameIndex - 1
+        // frameIndex = frameIndex - 1
+        become(active(hasStarted = true, loops+1, (frameIndex-1) % ANIMATION_LENGTH))
+        (frameIndex - 1) % ANIMATION_LENGTH
       }
     }
     else {
-      if(!STATE_INDEXES.contains(frameIndex + 1)) loops = 1
-      frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+      // frameIndex = (frameIndex + 1) % ANIMATION_LENGTH
+      if(!STATE_INDEXES.contains(frameIndex + 1)) become(active(hasStarted = true, 1, (frameIndex + 1) % ANIMATION_LENGTH ))
+      (frameIndex + 1) % ANIMATION_LENGTH
     }
   }
 }

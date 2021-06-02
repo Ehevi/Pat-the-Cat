@@ -1,6 +1,7 @@
 package kitties
 
 import akka.actor.Actor
+import kitties.KITTY_X_MATCHER.{firstKittyMatched, secondKittyMatched, thirdKittyMatched, fourthKittyMatched, fifthKittyMatched}
 import scalafx.Includes._
 import scalafx.application.Platform
 import scalafx.scene.input.MouseEvent
@@ -22,23 +23,19 @@ class KittiesPanelActor(kittiesPanel: KittiesPanel) extends Actor {
     }
   }
 
-  def matchKittyX(x: Double): Int = {
+  def matchKitty(x: Double): Int = {
     x match {
-      case x if INITIAL_KITTIES_X < x && x < (KITTY_WIDTH + INITIAL_KITTIES_X) => 1
-      case x if (SPACE_BETWEEN_KITTIES + INITIAL_KITTIES_X + KITTY_WIDTH) < x &&
-        x < (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES + KITTY_WIDTH * 2) => 2
-      case x if x < (SPACE_BETWEEN_KITTIES * 2 + INITIAL_KITTIES_X + KITTY_WIDTH * 3) &&
-        x > (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES * 2 + KITTY_WIDTH * 2) => 3
-      case x if x < (SPACE_BETWEEN_KITTIES * 3 + INITIAL_KITTIES_X + KITTY_WIDTH * 4) &&
-        x > (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES * 3 + KITTY_WIDTH * 3) => 4
-      case x if x < (WINDOW_WIDTH - SPACE_BETWEEN_KITTIES) &&
-        x > (INITIAL_KITTIES_X + SPACE_BETWEEN_KITTIES * 4 + KITTY_WIDTH * 4) => 5
+      case x if firstKittyMatched(x) => 1
+      case x if secondKittyMatched(x) => 2
+      case x if thirdKittyMatched(x) => 3
+      case x if fourthKittyMatched(x) => 4
+      case x if fifthKittyMatched(x) => 5
       case _ => 0
     }
   }
 
   kittiesPanel.onMouseClicked = (me: MouseEvent) => {
-    val matchedKitty = matchKittyX(me.x)
+    val matchedKitty = matchKitty(me.x)
     matchedKitty match {
       case 0 =>
       case 1 => context.system.actorSelection("user/" + KITTY_ACTOR_NAMES(0)) ! Clicked
