@@ -1,6 +1,5 @@
 package kitties
 
-import scalafx.Includes._
 import kitties.ActorManager.{getKittiesPanel, prepareKittyActors, startKitties, stopAll, terminateActorSystem}
 import scalafx.animation.AnimationTimer
 import scalafx.application.JFXApp
